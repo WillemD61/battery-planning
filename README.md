@@ -1,7 +1,7 @@
 # battery-planning
 optimise battery charging/discharging with hourly electricity prices
 
-# H1 Purpose
+# Purpose
 
 This is a stand-alone python program that creates a planning for charging and discharging a home battery system to optimise profit.
 It needs as input:
@@ -15,11 +15,11 @@ If the price data from entsoe.eu has been downloaded before it can be re-used, i
 
 The progress, intermediate steps and finals results will be displayed on screen and an output file will be created that can be loaded into a spreadsheet.
 
-# H1 Limitation
+# Limitation
 
 It does not take into account any tax effects as these will differ strongly from country to country, but this could easily be added.
 
-# H1 Get your API token
+# Get your API token
 
 To get an API token (it is free):
 1. Register for an account at https://transparency.entsoe.eu/dashboard/show
@@ -27,11 +27,11 @@ To get an API token (it is free):
 3. After receipt of their confirmation, go into your account and generate your token.
 4. Copy and paste the token to replace the xxxxxx on line 22 of the python program where it says securitytoken="xxxxxxxxxxx" 
 
-# H1 Future dvelopment
+# Future dvelopment
 
 This program will be developed further to integrate into domoticz home automation software.
 
-# H1 Program internal logic
+# Program internal logic
 
 A short description of the internals of the program:
 1. Prices are loaded onto a hourPriceList and a displayList. The displayList is for display and for tracking of the results. The hourPriceList is used for the planning process.
