@@ -9,7 +9,7 @@ It needs as input:
 2) The planning period
 3) The battery characteristics: maximum capacity and maximum charge and discharge speed
 
-The program is intended to be used to plan the rest of today and tomorrow (if the prices for tomorrow are already available, normally after 15:00 hours). It can also be run every hour to re-plan the remaining period, given a starting/current charge of that moment. It can even be used to run on historic data to simulate what could have been achieved.
+The program is intended to be used to plan the rest of today and tomorrow (if the prices for tomorrow are already available, normally after 15:00 hours). It can also be run every hour to re-plan the remaining period, given a starting/current charge of that moment. It can even be used to run on historic data to simulate what could have been achieved. At the end of the planning period the remaining charge will be zero and profit optimised.
 
 If the price data from entsoe.eu has been downloaded before it can be re-used, instead of requesting it again.
 
