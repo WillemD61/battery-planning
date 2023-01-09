@@ -1,5 +1,5 @@
 # battery-planning
-optimise battery charging/discharging with hourly electricity prices
+optimise battery charging/discharging with hourly electricity prices for maximised profit
 
 # Purpose
 
@@ -20,6 +20,8 @@ The progress, intermediate steps and finals results will be displayed on screen 
 It does not take into account any tax effects as these will differ strongly from country to country, but this could easily be added.
 
 It assumes a 100% efficiency in the process, i.e. the energy received and paid for from the grid is fully stored in the battery (and vice versa). This will be changed in the next version.
+
+It does not yet plan for electricity consumption or production (solar) in the home network. It can however be used to re-plan after a situation has changed as result of consumption or production.
 
 # Get your API token
 
