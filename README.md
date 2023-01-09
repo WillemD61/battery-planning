@@ -29,7 +29,7 @@ To get an API token (it is free):
 3. After receipt of their confirmation, go into your account and generate your token.
 4. Copy and paste the token to replace the xxxxxx on line 23 of the python program where it says securitytoken="xxxxxxxxxxx" 
 
-# Future dvelopment
+# Future development
 
 This program will be developed further to integrate into domoticz home automation software.
 
