@@ -275,7 +275,7 @@ def updateDisplayList(displayList,SeqNr1,SeqNr2,extraCharge):
                 displayList[i][3]=displayList[i][3]+extraCharge
                 displayList[i][5]=displayList[i][5]+extraCharge
                 displayList[i][6]=displayList[i][6]-1*displayList[i][1]/1000*extraCharge/1000
-                displayList[i][7]=abs(-1*displayList[i][5]/maxChargeSpeed*100)
+                displayList[i][7]=abs(-1*displayList[i][5]/maxDischargeSpeed*100)
                 maxUsePct=displayList[i][7]
             if displayList[i][0]>maxSeqNr and displayList[i][0]<minSeqNr:
                 displayList[i][3]=displayList[i][3]+extraCharge
@@ -283,7 +283,7 @@ def updateDisplayList(displayList,SeqNr1,SeqNr2,extraCharge):
                 displayList[i][4]="Charge"
                 displayList[i][5]=displayList[i][5]-extraCharge
                 displayList[i][6]=displayList[i][6]+displayList[i][1]/1000*extraCharge/1000    
-                displayList[i][7]=abs(displayList[i][5]/maxDischargeSpeed*100)
+                displayList[i][7]=abs(displayList[i][5]/maxChargeSpeed*100)
                 minUsePct=displayList[i][7]
     totalAmount=showList(displayList)
     if debug: input("Enter return to continue") 
