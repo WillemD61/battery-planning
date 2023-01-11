@@ -33,7 +33,11 @@ To get an API token (it is free):
 
 # Future development
 
-This program will be developed further to integrate into domoticz home automation software.
+This program will be developed further to integrate into domoticz home automation software. The expecated integration is as follows:
+1. Read entsoe.eu API security token and read battery charging characteristics from user variables.
+2. Read actual battery charge level from a domoticz device (updated by the battery system).
+3. Set a selector switch to charge/discharge action as result of the planning. The action connected to the switch can then control the battery system.
+4. Display prices and/or planning results. Method to be investigated.
 
 # Program internal logic
 
