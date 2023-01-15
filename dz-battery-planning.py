@@ -518,14 +518,41 @@ def outputToFile(displayList,starthour,endhour,outputFileName,writeMode):
 def outputToDevice(displayList,starthour,endhour,writeMode):
     if writeMode=='w': 
         clearTextDevice(planningDisplayIDX)
+    unclassifiedList=markTopLowPrices(displayList,starthour,endhour)
     for i in reversed(displayList):
         if i[0]>=starthour and i[0]<=endhour:
             outputString="%2d  %s  %+4.5f  %12s  %+7.0f  %+4.0f   %+7.0f   %+5.5f" %(i[0],i[2],(i[1]/1000),i[4],i[5],i[7],i[3],i[6])
+            if i[4]=="unclassified":
+                for u in unclassifiedList:
+                    if i[0]==u[0]: 
+                        outputString=outputString+u[2]
             outputString=outputString.replace(' ','_')  # JSON processing removes all duplicate spaces, so use underscore to get table format
             setTextDevice(planningDisplayIDX,outputString)
     timestamp=datetime.strftime(datetime.now(),'%Y%m%d %H:%M:%S')
     setTextDevice(planningDisplayIDX,"**__date_______time_________price________action___change__%speed___total_____amount______ ******")
     setTextDevice(planningDisplayIDX,"****** planning created "+timestamp+" for period "+startdate+" "+str(starthour)+" hr to "+enddate+" 24:00 hr ******")
+
+def markTopLowPrices(displayList,starthour,endhour):
+    # mark the (max) 5 lowest prices of the remaining unclassief items, provided below avg
+    unclassifiedList=[]
+    averagePrice=0
+    counter=0
+    for i in displayList:
+        if i[0]>=starthour and i[0]<=endhour:
+            averagePrice+=i[1]
+            counter+=1
+            if i[4]=="unclassified":
+                unclassifiedList.append([i[0],i[1],""])
+    unclassifiedList.sort(key=priceField)
+    averagePrice=float(averagePrice/counter)
+    if len(unclassifiedList)>=5:
+        endList=5
+    else:
+        endList=len(unclassifiedList)
+    for i in range(endList):
+        if unclassifiedList[i][1]<=averagePrice: unclassifiedList[i][2]="   low "+str(i+1)
+    return unclassifiedList
+
 
 def processCLarguments():
     global debug,outputMode,runMode

@@ -51,9 +51,10 @@ Devices:
 * batteryDischargeCode=20
 * batteryChargeLevelIDX=113           # the IDX of the Domoticz device with updated actual battery charge level (should be updated through the battery system API)
 
-The Domoticz integration mode is trigger by the Domoticz dzVents script. The script requires also some of the same idx numbers. The Domoticz integration mode can also be run from the Unix command line for testing using the "-d" command line argument (so type "python3 dz-battery-planning.py -d"). The Domoticz mode only creates a planning for maximum one day ahead, depending on availability of prices.
+The Domoticz integration mode is triggered by the Domoticz dzVents script. The script requires also some of the same idx numbers. The Domoticz integration mode can also be run from the Unix command line for testing using the "-d" command line argument (so type "python3 dz-battery-planning.py -d"). The Domoticz mode only creates a planning for maximum one day ahead, depending on availability of prices.
 
 Every time a new planning is created, the next required action is fed back into the dzVents script and then the relevant API commands are given to the battery system.
+The total planning is displayed in the log of the text device and also highlights the top 5 lowest prices in the remaining free/unclassified hours. Those are the best times for heavy electricity consumers, like tumbledryers, washing machines, electric cars etc. 
 
 Note that the current version is for simulation purposes only so no actual battery interface is present and the interface is assumed to be very simple. The battery system sends a current charge level and can receive three commands: Off, Charge, Discharge.
 
