@@ -90,7 +90,7 @@ Future development will concentrate on dynamic control in a real time environmen
 # Domoticz setup images and screenshots
 
 The switch for manually triggering the planning
-![image](https://user-images.githubusercontent.com/96531991/212547487-329c83ae-4070-46af-86eb-f4ed0b6f3b70.png?h=100)
+![image?h=100](https://user-images.githubusercontent.com/96531991/212547487-329c83ae-4070-46af-86eb-f4ed0b6f3b70.png)
 
 The user variables (except for the security token)
 ![image](https://user-images.githubusercontent.com/96531991/212547552-32353be2-04bb-4c5a-b441-3728d2ee0f08.png)
