@@ -20,9 +20,9 @@ The program is intended to be used to plan the rest of today and tomorrow (if th
 If the price data from entsoe.eu has been downloaded before it can be re-used from existing files, instead of requesting it again.
 
 The progress, intermediate steps and finals results will be displayed on screen and an output file will be created that can be loaded into a spreadsheet. The level of output can be controlled by command line arguments:
-1) -t for tracing. This is a debug mode with full display of intermediate steps and results.
-2) -v for verbose. This still shows each next step in the planning and the impact on the overall plan.
-3) -q for quiet. Minimal output. Default.
+* -t for tracing. This is a debug mode with full display of intermediate steps and results.
+* -v for verbose. This still shows each next step in the planning and the impact on the overall plan.
+* -q for quiet. Minimal output. Default.
 
 -s is the command line argument for standalone mode and is the default.
 
@@ -32,18 +32,18 @@ The program will take input from Domoticz variables and devices and will trigger
 
 The following Domoticz variables and devices need to be set up and adapted in the python program:
 # variables 
-securityTokenIDX=12                 # the IDX of the Domoticz user variable holding the API security token for transparency.entsoe.eu
-maxBatteryCapacityIDX=14            # the IDX of the Domoticz user variable holding the value for the maximum available battery charge capacity
-maxBatteryChargeSpeedIDX=15         # the IDX of the Domoticz user variable holding the value for the maximum charge speed
-maxBatteryDischargeSpeedIDX=16      # the IDX of the Domoticz user variable holding the value for the maximum discharge speed
+* securityTokenIDX=12                 # the IDX of the Domoticz user variable holding the API security token for transparency.entsoe.eu
+* maxBatteryCapacityIDX=14            # the IDX of the Domoticz user variable holding the value for the maximum available battery charge capacity
+* maxBatteryChargeSpeedIDX=15         # the IDX of the Domoticz user variable holding the value for the maximum charge speed
+* maxBatteryDischargeSpeedIDX=16      # the IDX of the Domoticz user variable holding the value for the maximum discharge speed
 ## devices
-planningDisplayIDX=111              # the IDX number of a Domoticz text device to use for display of the planning
-batterySwitchIDX=112                # the IDX of the Domoticz selector switch for controlling the battery system actions 
+* planningDisplayIDX=111              # the IDX number of a Domoticz text device to use for display of the planning
+* batterySwitchIDX=112                # the IDX of the Domoticz selector switch for controlling the battery system actions 
                                     # (API commands for control of the battery system need to be set in the "selector action" fields of the device)
-batteryOffCode=0                    # the 3 level numbers as defined in the selector switch for Off/Charge/Discharge (0,10 and 20 by default)
-batteryChargeCode=10
-batteryDischargeCode=20
-batteryChargeLevelIDX=113           # the IDX of the Domoticz device with updated actual battery charge level (should be updated through the battery system API)
+* batteryOffCode=0                    # the 3 level numbers as defined in the selector switch for Off/Charge/Discharge (0,10 and 20 by default)
+* batteryChargeCode=10
+* batteryDischargeCode=20
+* batteryChargeLevelIDX=113           # the IDX of the Domoticz device with updated actual battery charge level (should be updated through the battery system API)
 
 The Domoticz integration mode is trigger by the Domoticz dzVents script. The script requires also some of the same idx numbers. The Domoticz integration mode can also be run from the Unix command line for testing using the "-d" command line argument (so type "python3 dz-battery-planning.py -d"). The Domoticz mode only creates a planning for maximum one day ahead, depending on availablity of prices.
 
