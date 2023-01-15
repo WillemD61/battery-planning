@@ -83,3 +83,7 @@ A short description of the internals of the program:
 3. The pairList is run down from top to bottom to select the pairs that still fit onto the planning, taking into account previously planned actions and maximum battery capacity and maximum charge and discharge speeds. It restarts from the top after each action, since a discharge/charge action could open up capacity for a charge/discharge that did not exist before due to maximum capacity. This continues until the end of the list is reached.
 4. The next period is processed by re-starting at step 1.
 
+# Future development
+
+Future devlopment will concentrate on dynamic control in a real time environment with electricity consumption and production.
+
