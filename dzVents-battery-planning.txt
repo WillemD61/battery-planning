@@ -1,0 +1,115 @@
+-- This script is for control of battery system based on the battery planning created and available on the planning display device.
+-- The planning is created by the python program called from this script and then loaded onto the display device identified by idxPlanningDisplay.
+-- The planning program also provides back a JSON data structure with the next action required, which is then processed below in this script.
+-- Once the target charge level of the action is reached, the battery system is switched off.
+
+-- The planning is created at the start of every hour or when the relevant push button is pressed in domoticz.
+
+-- This script is for simulation purposes only and assumes a simple interface with the battery system, as follows:
+-- 1) the actual battery charge level is made available through an API and loaded onto a Domoticz percentage device by a separate Domoticz script
+-- 2) Off/Charge/Discharge commands can be given through the API by setting a Domoticz selector switch to the desired level. 
+--    The API commands associated with the selected level (defined on the switch) are then executed to pass the command to the battery system
+
+-- below idx numbers need to be adjusted to the domoticz environment this script is run in 
+
+-- user variables
+local idxMaxBatteryCapacity=14
+local pythonPath="/home/pi/domoticz/python"
+
+-- devices
+local idxPlanningDisplay=111
+local idxBatterySwitch=112
+local idxBatteryChargeLevel=113
+local idxManualPlanning=114   -- a switch that can be changed by the user to trigger a planning action
+
+-- selector switch levels
+local batteryOffCode=0 
+local batteryChargeCode=10 
+local batteryDischargeCode=20
+
+return {
+	on = {
+		devices = {
+			idxBatteryChargeLevel,
+			idxManualPlanning
+		},
+		timer = {
+		    'every hour' -- to update the battery action at least every hour according to the planning
+		},
+		shellCommandResponses = { 'planningDone' }
+	},
+	data =  {
+            targetCharge = { initial = 0 }, -- persistent variable to be used in future runs of this script
+    },
+	logging = {
+		level = domoticz.LOG_INFO,
+		marker = 'battery control',
+	},
+	execute = function(domoticz, item)
+	    
+	    domoticz.log('Script triggered by ' .. tostring(item), domoticz.LOG_INFO)
+	    --domoticz.utils.dumpTable(item)
+	    --domoticz.log('Script triggered by trigger' .. tostring(item.trigger), domoticz.LOG_INFO)
+	    
+	    if item.isTimer or (item.isDevice and item.id==idxManualPlanning) then
+	        -- triggered by the timer or manual request: time to create a new planning, launch the planning program
+	        domoticz.executeShellCommand({
+	            command = '/usr/bin/python3 ' .. pythonPath .. '/dz-battery-planning.py -d',  -- shell command to create a planning in "domoticz integration mode"
+	            callback = 'planningDone',
+	            timeout = 60,
+	        })
+	    else
+	        if item.isShellCommandResponse then
+	            -- is callback after planning program was executed, need to check required action and execute accordingly
+	            domoticz.log('planning program was executed. Check text device for display', domoticz.LOG_INFO)
+	            -- output of planning program is small json with action for next hour
+	            domoticz.utils.dumpTable(item.json)
+	            if item.isJSON then
+	                local actionDate=item.json["date"]
+	                local actionHour=item.json["hour"]
+	                local actionType=item.json["action"]
+	                local changeCharge=item.json["change"]
+	                local totalCharge=item.json["total"]
+	                local currentCharge=domoticz.devices(idxBatteryChargelevel).percentage * domoticz.variables(idxMaxBatteryCapacity).value
+	                domoticz.log("Output received Date:" .. actionDate .. "Hour:" .. actionHour .. "Action:" .. actionType .. "Change:" .. tostring(changeCharge) .. "Total:" .. tostring(totalCharge) , domoticz.LOG_INFO)
+	                if actionDate==os.date("%Y-%m-%d") and actionHour==os.date("%H") then
+	                    if actionType=="unclassified" then
+	                        domoticz.log("Switching battery off.", domoticz.LOG_INFO)
+	                        domoticz.devices(idxBatterySwitch).switchSelector(batteryOffCode)
+	                    else
+	                        domoticz.data.targetCharge=totalCharge  
+	                        if actionType=="Charge" and currentCharge<totalCharge then
+	                            domoticz.log("Switching battery to charge.", domoticz.LOG_INFO)
+	                            domoticz.devices(idxBatterySwitch).switchSelector(batteryChargeCode)
+	                        else
+	                            if actionType=="Discharge" and currentCharge > totalCharge then
+	                                domoticz.log("Switching battery to discharge.", domoticz.LOG_INFO)
+	                                domoticz.devices(idxBatterySwitch).switchSelector(batteryDischargeCode)
+	                            else
+	                                domoticz.log("Unknown action code.", domoticz.LOG_INFO)
+	                            end
+                            end
+                        end
+                    end     
+	            else
+	                domoticz.log("Planning output not as expected, no JSON received",domoticz.LOG_INFO)
+	            end
+	        else
+	            if (item.isDevice and item.id==idxBatteryChargeLevel) then
+	                -- triggered by update of actual charge level, need to check whether planned level has been reached    
+                    domoticz.log('update of battery charge level received',domoticz.LOG_INFO)
+                    local currentCharge=domoticz.devices(idxBatteryChargelevel).percentage * domoticz.variables(idxMaxBatteryCapacity).value
+                    local currentActionMode=domoticz.devices(idxBatterySwitch).level
+                    if (currentActionMode==batteryChargeCode and currentCharge>=domoticz.data.targetCharge) or
+                       (currentActionMode==batteryDischargeCode and currentCharge<=domoticz.data.targetCharge)
+                    then
+                        -- target reached, switching off
+                        domoticz.log("Switching battery off.", domoticz.LOG_INFO)
+	                    domoticz.devices(idxBatterySwitch).switchSelector(batteryOffCode)
+	                end    
+                end
+	        end     
+	    end  
+	end
+}
+
