@@ -20,9 +20,9 @@ The program is intended to be used to plan the rest of today and tomorrow (if th
 If the price data from entsoe.eu has been downloaded before it can be re-used from existing files, instead of requesting it again.
 
 The progress, intermediate steps and finals results will be displayed on screen and an output file will be created that can be loaded into a spreadsheet. The level of output can be controlled by command line arguments:
--t for tracing. This is a debug mode with full display of intermediate steps and results.
--v for verbose. This still shows each next step in the planning and the impact on the overall plan.
--q for quiet. Minimal output. Default.
+1) -t for tracing. This is a debug mode with full display of intermediate steps and results.
+2) -v for verbose. This still shows each next step in the planning and the impact on the overall plan.
+3) -q for quiet. Minimal output. Default.
 
 -s is the command line argument for standalone mode and is the default.
 
