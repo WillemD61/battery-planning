@@ -523,7 +523,7 @@ def outputToDevice(displayList,starthour,endhour,writeMode):
             outputString="%2d  %s  %+4.5f  %12s  %+7.0f  %+4.0f   %+7.0f   %+5.5f" %(i[0],i[2],(i[1]/1000),i[4],i[5],i[7],i[3],i[6])
             outputString=outputString.replace(' ','_')  # JSON processing removes all duplicate spaces, so use underscore to get table format
             setTextDevice(planningDisplayIDX,outputString)
-    timestamp=datetime.strftime(datetime.now(),'%Y%m%d %H:%M:%S"')
+    timestamp=datetime.strftime(datetime.now(),'%Y%m%d %H:%M:%S')
     setTextDevice(planningDisplayIDX,"**__date_______time_________price________action___change__%speed___total_____amount______ ******")
     setTextDevice(planningDisplayIDX,"****** planning created "+timestamp+" for period "+startdate+" "+str(starthour)+" hr to "+enddate+" 24:00 hr ******")
 
