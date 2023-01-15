@@ -51,11 +51,11 @@ Devices:
 * batteryDischargeCode=20
 * batteryChargeLevelIDX=113           # the IDX of the Domoticz device with updated actual battery charge level (should be updated through the battery system API)
 
-The Domoticz integration mode is trigger by the Domoticz dzVents script. The script requires also some of the same idx numbers. The Domoticz integration mode can also be run from the Unix command line for testing using the "-d" command line argument (so type "python3 dz-battery-planning.py -d"). The Domoticz mode only creates a planning for maximum one day ahead, depending on availablity of prices.
+The Domoticz integration mode is trigger by the Domoticz dzVents script. The script requires also some of the same idx numbers. The Domoticz integration mode can also be run from the Unix command line for testing using the "-d" command line argument (so type "python3 dz-battery-planning.py -d"). The Domoticz mode only creates a planning for maximum one day ahead, depending on availability of prices.
 
 Every time a new planning is created, the next required action is fed back into the dzVents script and then the relevant API commands are given to the battery system.
 
-Note that the current version is for simulation purposes only so no actual battery interface is present and the interface is assumed to be very simple. The abttery system sends a current charge level and can receive three commands: Off, Charge, Discharge.
+Note that the current version is for simulation purposes only so no actual battery interface is present and the interface is assumed to be very simple. The battery system sends a current charge level and can receive three commands: Off, Charge, Discharge.
 
 The Domoticz mode re-uses the entsoe.xml file for storing price data so no manual maintenance of the file system is required. 
 
@@ -85,7 +85,7 @@ A short description of the internals of the program:
 
 # Future development
 
-Future devlopment will concentrate on dynamic control in a real time environment with electricity consumption and production.
+Future development will concentrate on dynamic control in a real time environment with electricity consumption and production.
 
 # Domoticz setup images and screenshots
 
