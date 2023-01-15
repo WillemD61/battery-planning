@@ -30,6 +30,8 @@ Note the prie data from the entsoe website is stored in local xml files and not 
 
 # Domoticz integration mode
 
+For this integration both the python program and the dzVents script are needed. The dzVents file contents should be copied and pasted into a script via the Domoticz interface. The python program is expected in the domoticz/python folder (please adapt the dzVents script if a different folder is used)
+
 The program will take input from Domoticz variables and devices and will trigger output onto Domoticz devices as well. The idx numbers for these devices will need to be adapted in the program and in the Domoticz script(s) as these differ for each operating environment.
 
 The following Domoticz variables and devices need to be set up and adapted in the python program:
