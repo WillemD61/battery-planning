@@ -87,3 +87,29 @@ A short description of the internals of the program:
 
 Future devlopment will concentrate on dynamic control in a real time environment with electricity consumption and production.
 
+# Domoticz setup images and screenshots
+
+The switch for manually triggering the planning
+![image](https://user-images.githubusercontent.com/96531991/212547487-329c83ae-4070-46af-86eb-f4ed0b6f3b70.png)
+
+The user variables (except for the security token)
+![image](https://user-images.githubusercontent.com/96531991/212547552-32353be2-04bb-4c5a-b441-3728d2ee0f08.png)
+
+The battery selector switch icon
+![image](https://user-images.githubusercontent.com/96531991/212547623-95a5eac5-0fa3-4787-9d9d-a73fd867da6b.png)
+
+and the setup of the selector switch
+![image](https://user-images.githubusercontent.com/96531991/212547837-f85c898f-fba8-40c4-a4a3-3976ba3605f1.png)
+
+The icon of the text display device for the planning
+![image](https://user-images.githubusercontent.com/96531991/212548033-fbec377b-8001-4a6b-a14e-a2da203b418c.png)
+
+And the detail log of the text display device (note the domoticz font was changed to monospace to get a tabular format)
+![image](https://user-images.githubusercontent.com/96531991/212548120-105a24e5-d3b8-4ff6-a8e9-4460c3a9ab04.png)
+
+
+
+
+
+
+
