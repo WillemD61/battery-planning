@@ -26,20 +26,24 @@ The progress, intermediate steps and finals results will be displayed on screen 
 
 -s is the command line argument for standalone mode and is the default.
 
+Note the prie data from the entsoe website is stored in local xml files and not automatically removed, so some manual maintenance will be required at some point.
+
 # Domoticz integration mode
 
 The program will take input from Domoticz variables and devices and will trigger output onto Domoticz devices as well. The idx numbers for these devices will need to be adapted in the program and in the Domoticz script(s) as these differ for each operating environment.
 
 The following Domoticz variables and devices need to be set up and adapted in the python program:
-# variables 
+
+Variables: 
 * securityTokenIDX=12                 # the IDX of the Domoticz user variable holding the API security token for transparency.entsoe.eu
 * maxBatteryCapacityIDX=14            # the IDX of the Domoticz user variable holding the value for the maximum available battery charge capacity
 * maxBatteryChargeSpeedIDX=15         # the IDX of the Domoticz user variable holding the value for the maximum charge speed
 * maxBatteryDischargeSpeedIDX=16      # the IDX of the Domoticz user variable holding the value for the maximum discharge speed
-## devices
+
+Devices:
 * planningDisplayIDX=111              # the IDX number of a Domoticz text device to use for display of the planning
 * batterySwitchIDX=112                # the IDX of the Domoticz selector switch for controlling the battery system actions 
-                                    # (API commands for control of the battery system need to be set in the "selector action" fields of the device)
+                                      # (API commands for control of the battery system need to be set in the "selector action" fields of the device)
 * batteryOffCode=0                    # the 3 level numbers as defined in the selector switch for Off/Charge/Discharge (0,10 and 20 by default)
 * batteryChargeCode=10
 * batteryDischargeCode=20
@@ -51,13 +55,13 @@ Every time a new planning is created, the next required action is fed back into 
 
 Note that the current version is for simulation purposes only so no actual battery interface is present and the interface is assumed to be very simple. The abttery system sends a current charge level and can receive three commands: Off, Charge, Discharge.
 
-# Limitation of the program
+# Limitations of the program
 
 It does not take into account any tax effects in the planning as these will differ strongly from country to country, but this could easily be added.
 
 It assumes a 100% efficiency in the process, i.e. the energy received and paid for from the grid is fully stored in the battery (and vice versa). Once a real efficiency is known, this should be included in the profitability calculation of each charge/discharge and discharge/charge action pair.
 
-It does not yet plan for electricity consumption or production (solar) in the home network. It can however be used to re-plan after a situation has changed as result of consumption or production.
+It does not yet plan for electricity consumption or production (solar) in the home network. It can however be used to re-plan after a situation has changed as result of consumption or production. Taking into account the home consumption and/or production will be future development with dzVents scripts.
 
 # Get your API token for retrieving electricity prices.
 
