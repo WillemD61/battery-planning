@@ -55,6 +55,8 @@ Every time a new planning is created, the next required action is fed back into 
 
 Note that the current version is for simulation purposes only so no actual battery interface is present and the interface is assumed to be very simple. The abttery system sends a current charge level and can receive three commands: Off, Charge, Discharge.
 
+The Domoticz mode re-uses the entsoe.xml file for storing price data so no manual maintenance of the file system is required. 
+
 # Limitations of the program
 
 It does not take into account any tax effects in the planning as these will differ strongly from country to country, but this could easily be added.
