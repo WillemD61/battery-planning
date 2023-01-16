@@ -58,6 +58,8 @@ The total planning is displayed in the log of the text device and also highlight
 
 Note that the current version is for simulation purposes only so no actual battery interface is present and the interface is assumed to be very simple. The battery system sends a current charge level and can receive three commands: Off, Charge, Discharge.
 
+A separate dzVents script is created to simulate a battery system in absence of a real setup. 
+
 The Domoticz mode re-uses the entsoe.xml file for storing price data so no manual maintenance of the file system is required. 
 
 # Limitations of the program

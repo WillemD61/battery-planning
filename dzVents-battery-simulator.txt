@@ -1,0 +1,90 @@
+-- This script is for simulating a battery system to evaluate whether investing in one would be worthwhile.
+-- The script should work in the environment of the battery planning python program and the dzVents script that launches that python program and processes the result.
+
+-- This script is for simulation purposes only and assumes a simple interface between battery system and domoticz.
+-- 1) the actual battery charge level is made available through an API and loaded onto a Domoticz percentage device by this script
+-- 2) Off/Charge/Discharge commands can be given through the API by setting a Domoticz selector switch to the desired level. 
+--    The API commands associated with the selected level (defined on the switch) are then executed to pass the command to the battery system.
+--    This script is then on the receiving end.
+-- So this script, as simulation of the battery system, will be receiving the action commands and will be updating the chargelevel accordingly.
+
+-- below idx numbers need to be adjusted to the domoticz environment this script is run in 
+
+-- user variables
+
+local idxMaxBatteryCapacity=14
+local idxMaxChargeSpeed=15
+local idxMaxDischargeSpeed=16
+
+-- devices
+local idxBatterySwitch=112
+local idxBatteryChargeLevel=113
+
+-- selector switch levels
+local batteryOffCode=0 
+local batteryChargeCode=10 
+local batteryDischargeCode=20
+
+return {
+	on = {
+		devices = {
+			idxBatterySwitch,
+				},
+		timer = {
+		    'every 2 minutes' -- to update the battery charge level
+		},
+	},
+	logging = {
+		level = domoticz.LOG_INFO,
+		marker = 'battery simulator',
+	},
+	execute = function(domoticz, item)
+	    
+	    local currentCharge=domoticz.devices(idxBatteryChargeLevel).percentage/100 * domoticz.variables(idxMaxBatteryCapacity).value
+	    local chargeChange=0
+
+	    if item.isTimer then
+	        local currentActionMode=domoticz.devices(idxBatterySwitch).level
+	        if currentActionMode==batteryChargeCode then
+	            chargeChange=domoticz.variables(idxMaxChargeSpeed).value * domoticz.devices(idxBatteryChargeLevel).lastUpdate.secondsAgo/(60*60)
+	        else
+	            if currentActionMode==batteryDischargeCode then
+	                chargeChange=-1 * domoticz.variables(idxMaxDischargeSpeed).value * domoticz.devices(idxBatteryChargeLevel).lastUpdate.secondsAgo/(60*60)
+	            else
+	                if currentActionMode==batteryOffCode then
+	                    chargeChange=0
+	                end
+                end
+            end
+        else
+            -- triggered by switch device 
+            -- if switch is from action to Off or opposite action, then update the chargelevel since last update
+            -- if switch is from Off to action, just update with current chargelevel to set a lastupdate time for future calculations
+            if (domoticz.devices(idxBatterySwitch).lastLevel==batteryChargeCode and (domoticz.devices(idxBatterySwitch).level==batteryOffcode or domoticz.devices(idxBatterySwitch).level==batteryDischargeCode)) then
+                chargeChange=domoticz.variables(idxMaxChargeSpeed).value * domoticz.devices(idxBatteryChargeLevel).lastUpdate.secondsAgo/(60*60)
+            else    
+                if (domoticz.devices(idxBatterySwitch).lastLevel==batteryDischargeCode and (domoticz.devices(idxBatterySwitch).level==batteryOffcode or domoticz.devices(idxBatterySwitch).level==batteryChargeCode)) then
+                    chargeChange=-1 * domoticz.variables(idxMaxDischargeSpeed).value * domoticz.devices(idxBatteryChargeLevel).lastUpdate.secondsAgo/(60*60)
+                else  
+                    if (domoticz.devices(idxBatterySwitch).lastLevel==batteryOffcode and (domoticz.devices(idxBatterySwitch).level==batteryChargeCode or domoticz.devices(idxBatterySwitch).level==batteryDischargeCode)) then
+                        chargeChange=0
+                    end
+                end
+            end
+        end    
+        
+        local newChargePct=(currentCharge + chargeChange)/domoticz.variables(idxMaxBatteryCapacity).value * 100
+        if newChargePct<0 then
+            newChargePct=0
+        else 
+            if newChargePct>100 then
+                newChargePct=100
+            end
+        end    
+        domoticz.log("Simulator seconds since last update : " .. domoticz.devices(idxBatteryChargeLevel).lastUpdate.secondsAgo,domoticz.LOG_INFO)
+        domoticz.log("Simulator chargeChange :" .. chargeChange,domoticz.LOG_INFO)
+        domoticz.log("Simulator newChargePct :" .. newChargePct,domoticz.LOG_INFO)
+        domoticz.devices(idxBatteryChargeLevel).updatePercentage(newChargePct)   
+    end
+}
+
