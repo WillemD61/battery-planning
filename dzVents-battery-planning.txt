@@ -70,7 +70,7 @@ return {
 	                local actionType=item.json["action"]
 	                local changeCharge=item.json["change"]
 	                local totalCharge=item.json["total"]
-	                local currentCharge=domoticz.devices(idxBatteryChargelevel).percentage * domoticz.variables(idxMaxBatteryCapacity).value
+	                local currentCharge=domoticz.devices(idxBatteryChargeLevel).percentage * domoticz.variables(idxMaxBatteryCapacity).value
 	                domoticz.log("Output received Date:" .. actionDate .. "Hour:" .. actionHour .. "Action:" .. actionType .. "Change:" .. tostring(changeCharge) .. "Total:" .. tostring(totalCharge) , domoticz.LOG_INFO)
 	                if actionDate==os.date("%Y-%m-%d") and actionHour==os.date("%H") then
 	                    if actionType=="unclassified" then
@@ -98,7 +98,7 @@ return {
 	            if (item.isDevice and item.id==idxBatteryChargeLevel) then
 	                -- triggered by update of actual charge level, need to check whether planned level has been reached    
                     domoticz.log('update of battery charge level received',domoticz.LOG_INFO)
-                    local currentCharge=domoticz.devices(idxBatteryChargelevel).percentage * domoticz.variables(idxMaxBatteryCapacity).value
+                    local currentCharge=domoticz.devices(idxBatteryChargeLevel).percentage * domoticz.variables(idxMaxBatteryCapacity).value
                     local currentActionMode=domoticz.devices(idxBatterySwitch).level
                     if (currentActionMode==batteryChargeCode and currentCharge>=domoticz.data.targetCharge) or
                        (currentActionMode==batteryDischargeCode and currentCharge<=domoticz.data.targetCharge)
