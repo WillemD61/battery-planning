@@ -83,7 +83,7 @@ It does not take into account any tax effects in the planning as these will diff
 
 It assumes a 100% efficiency in the process, i.e. the energy received and paid for from the grid is fully stored in the battery (and vice versa). Once a real efficiency is known, this could be included in the profitability calculation of each charge/discharge and discharge/charge action pair. It also assumes a linear charge/discharge curve (when calculating remaining charge/discharge capacity for part of an hour).
 
-It does not plan for electricity consumption in the home network. It can however be used to re-plan after a situation has changed as result of consumption.
+It does not plan for electricity consumption in the home network. It can however be used to re-plan after a situation has changed as result of consumption. It also indicates the remaining cheapest hours without any planned action (with low_1, low_2 etc).
 
 # Get your API token for retrieving electricity prices.
 
