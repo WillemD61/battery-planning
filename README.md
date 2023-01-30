@@ -67,9 +67,9 @@ The Domoticz mode re-uses the entsoe.xml file (without timestamp in the name) fo
 
 If the -p option is added to the call of the python program, then the forecasted production of the PV panels will be included in the planning. For this the location (latitude/longitude) settings in Domoticz need to be defined and the following user variables need to be set up (with IDX numbers adapted to the environment)
 
-pvPanelAngleIDX=17                  # the IDX of the Domoticz user variable holding the value of the PV panel angle (horizontal = 0)
-pvPanelAzimuthIDX=18                # the IDX of the Domoticz user variable holding the value of the PV panel azimuth (south = 0)
-pvPanelMaxPeakIDX=19                # the IDX of the Domoticz user variable holding the value of the PV panel max peak kWH
+* pvPanelAngleIDX=17                  # the IDX of the Domoticz user variable holding the value of the PV panel angle (horizontal = 0)
+* pvPanelAzimuthIDX=18                # the IDX of the Domoticz user variable holding the value of the PV panel azimuth (south = 0)
+* pvPanelMaxPeakIDX=19                # the IDX of the Domoticz user variable holding the value of the PV panel max peak kWH
 
 The forecast will be obtained from forecast.solar and shown as separate lines in the planning. For each line it will be defined whether to store the production in the battery system or to return it to the grid. The charge/discharge action related to the price line in the same hour will be adapted accordingly.
 
