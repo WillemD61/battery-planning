@@ -50,7 +50,8 @@ return {
 	    if item.isTimer or (item.isDevice and item.id==idxManualPlanning) then
 	        -- triggered by the timer or manual request: time to create a new planning, launch the planning program
 	        domoticz.executeShellCommand({
-	            command = '/usr/bin/python3 ' .. pythonPath .. '/dz-battery-planning.py -d',  -- shell command to create a planning in "domoticz integration mode"
+	            -- command = '/usr/bin/python3 ' .. pythonPath .. '/dz-battery-planning.py -d',  -- shell command to create a planning in "domoticz integration mode"
+	            command = '/usr/bin/python3 ' .. pythonPath .. '/dz-battery-planning.py -d -p',  -- shell command to create a planning in "domoticz integration mode" including PV panel production
 	            callback = 'planningDone',
 	            timeout = 60,
 	        })
@@ -59,30 +60,31 @@ return {
 	            -- is callback after planning program was executed, need to check required action and execute accordingly
 	            domoticz.log('planning program was executed. Check text device for display', domoticz.LOG_INFO)
 	            -- output of planning program is small json with action for next hour
-	            domoticz.utils.dumpTable(item.json)
 	            if item.isJSON then
 	                local actionDate=item.json["date"]
 	                local actionHour=item.json["hour"]
 	                local actionType=item.json["action"]
 	                local changeCharge=item.json["change"]
-	                local totalCharge=item.json["total"]
+	                local targetCharge=item.json["target"]
 	                local currentCharge=domoticz.devices(idxBatteryChargeLevel).percentage/100 * domoticz.variables(idxMaxBatteryCapacity).value
-	                domoticz.log("Output received is Date:" .. actionDate .. "Hour:" .. actionHour .. "Action:" .. actionType .. "Change:" .. tostring(changeCharge) .. "Total:" .. tostring(totalCharge) , domoticz.LOG_INFO)
+	                domoticz.log("Output received is Date:" .. actionDate .. "Hour:" .. actionHour .. "Action:" .. actionType .. "Change:" .. tostring(changeCharge) .. "Target:" .. tostring(targetCharge) , domoticz.LOG_INFO)
 	                if actionDate==os.date("%Y-%m-%d") and actionHour==os.date("%H") then
 	                    if actionType=="unclassified" then
 	                        domoticz.log("Switching battery off.", domoticz.LOG_INFO)
 	                        domoticz.devices(idxBatterySwitch).switchSelector(batteryOffCode)
 	                    else
-	                        domoticz.data.targetCharge=totalCharge  
-	                        if actionType=="Charge" and currentCharge<totalCharge then
+	                        domoticz.data.targetCharge=targetCharge  
+	                        if currentCharge<targetCharge then
 	                            domoticz.log("Switching battery to charge.", domoticz.LOG_INFO)
 	                            domoticz.devices(idxBatterySwitch).switchSelector(batteryChargeCode)
 	                        else
-	                            if actionType=="Discharge" and currentCharge > totalCharge then
+	                            if currentCharge > targetCharge then
 	                                domoticz.log("Switching battery to discharge.", domoticz.LOG_INFO)
 	                                domoticz.devices(idxBatterySwitch).switchSelector(batteryDischargeCode)
 	                            else
-	                                domoticz.log("Unknown action code.", domoticz.LOG_INFO)
+	                                domoticz.log("Unknown action.", domoticz.LOG_INFO)
+	                                domoticz.log("Switching battery off.", domoticz.LOG_INFO)
+	                                domoticz.devices(idxBatterySwitch).switchSelector(batteryOffCode)
 	                            end
                             end
                         end
@@ -108,4 +110,3 @@ return {
 	    end  
 	end
 }
-
