@@ -1,12 +1,14 @@
 # Battery planning and control
 
-Optimise battery charging/discharging with hourly electricity prices for maximised profit.
+Optimise battery charging/discharging with hourly electricity prices for maximised profit, with the option to include solar panel production forecast.
 
 # Purpose
 
-This is a python program that creates a planning for charging and discharging a home battery system to optimise profit. It can be run in standalone mode or in Domoticz integration mode. 
+This is a python program that creates a planning for charging and discharging a home battery system to optimise profit. It can be run in standalone mode or in Domoticz integration mode. (with the -s or -d command line argument)
 
-The standalone mode will interactively request user input and provide feedback on the screen. The Domoticz mode will take the input from Domoticz variables and devices, load the planning onto a Domoticz text device for display and trigger the next action from the planning. The standalone mode will only produce a planning and not trigger any action.
+The standalone mode will interactively request user input and provide feedback on the screen. The Domoticz mode will take the input from Domoticz variables and devices, load the planning onto a Domoticz text device for display and trigger the next action from the planning. The standalone mode will only produce a planning (into a file and onto the screen) and not trigger any action.
+
+The domoticz version has the option to include solar panel production forecast in the planning (with the -p command line argument). It will take location and pv panel configuration data from domoticz variables and obtain production forecast for current and next day from the website forecast.solar
 
 # Stand alone mode
 
@@ -15,7 +17,7 @@ The program will need as input:
 2) The planning period
 3) The battery characteristics: maximum capacity and maximum charge and discharge speed
 
-The program is intended to be used to plan the rest of today and tomorrow (if the prices for tomorrow are already available, normally after 15:00 hours). However, it can also be run every hour to re-plan the remaining period, given a starting/current charge of that moment. It can even be used to run on historic data to simulate what could have been achieved. At the end of the planning period the remaining charge will be zero and profit optimised.
+The main purpose of the program is to plan today and tomorrow (if the prices for tomorrow are already available, normally after 15:00 hours). It can be run any time to re-plan the remaining period, given an initial charge of that moment. It can also be used to run on historic price data to simulate what could have been achieved and to evaluate return on investment for a battery system. At the end of the planning period the remaining charge will be zero and profit optimised.
 
 If the price data from entsoe.eu has been downloaded before it can be re-used from existing files, instead of requesting it again.
 
@@ -26,7 +28,7 @@ The progress, intermediate steps and finals results will be displayed on screen 
 
 -s is the command line argument for standalone mode and is the default.
 
-Note the prie data from the entsoe website is stored in local xml files and not automatically removed, so some manual maintenance will be required at some point.
+Note the price data from the entsoe website is stored in local xml files with a timestamp and not automatically removed, so some manual maintenance of the file system will be required at some point.
 
 # Domoticz integration mode
 
