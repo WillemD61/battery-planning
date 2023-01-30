@@ -17,7 +17,7 @@ The program will need as input:
 2) The planning period
 3) The battery characteristics: maximum capacity and maximum charge and discharge speed
 
-The main purpose of the program is to plan today and tomorrow (if the prices for tomorrow are already available, normally after 15:00 hours). It can be run any time to re-plan the remaining period, given an initial charge of that moment. It can also be used to run on historic price data to simulate what could have been achieved and to evaluate return on investment for a battery system. At the end of the planning period the remaining charge will be zero and profit optimised.
+The main purpose of the program is to plan today and tomorrow (if the prices for tomorrow are already available, normally after 15:00 hours). It can be re-run at any time to re-plan the remaining period, given an initial charge of that moment. It can also be used to run on historic price data to simulate what could have been achieved and to evaluate return on investment for a battery system. At the end of the planning period the remaining charge will be zero and profit optimised.
 
 If the price data from entsoe.eu has been downloaded before it can be re-used from existing files, instead of requesting it again.
 
@@ -32,9 +32,9 @@ Note the price data from the entsoe website is stored in local xml files with a 
 
 # Domoticz integration mode
 
-For this integration both the python program and the dzVents script are needed. The dzVents file contents should be copied and pasted into a script via the Domoticz interface. The python program is expected in the domoticz/python folder (please adapt the dzVents script if a different folder is used)
+For this integration both the python program and the dzVents scripts (published here as .txt files) are needed. The dzVents file contents should be copied and pasted into a script via the Domoticz interface. The python program is expected in the domoticz/python folder (please adapt the dzVents script if a different folder is used)
 
-The program will take input from Domoticz variables and devices and will trigger output onto Domoticz devices as well. The idx numbers for these devices will need to be adapted in the program and in the Domoticz script(s) as these differ for each operating environment.
+The program will take input from Domoticz variables and devices and will trigger output onto Domoticz devices. The idx numbers for these devices will need to be adapted in the program and in the Domoticz script(s) as these differ for each operating environment.
 
 The following Domoticz variables and devices need to be set up and adapted in the python program:
 
@@ -51,9 +51,9 @@ Devices:
 * batteryOffCode=0                    # the 3 level numbers as defined in the selector switch for Off/Charge/Discharge (0,10 and 20 by default)
 * batteryChargeCode=10
 * batteryDischargeCode=20
-* batteryChargeLevelIDX=113           # the IDX of the Domoticz device with updated actual battery charge level (should be updated through the battery system API)
+* batteryChargeLevelIDX=113           # the IDX of the Domoticz device with updated actual battery charge level, in percent (should be updated through the battery system API)
 
-The Domoticz integration mode is triggered by the Domoticz dzVents script. The script requires also some of the same idx numbers. The Domoticz integration mode can also be run from the Unix command line for testing using the "-d" command line argument (so type "python3 dz-battery-planning.py -d"). The Domoticz mode only creates a planning for maximum one day ahead, depending on availability of prices.
+The Domoticz integration mode is normally triggered by a call from the Domoticz dzVents script. The dzVents script requires also some of the same idx numbers. The Domoticz integration mode can also be run from the Unix command line for testing using the "-d" command line argument (so type "python3 dz-battery-planning.py -d"). The Domoticz mode creates a planning for maximum one day ahead, depending on availability of prices.
 
 Every time a new planning is created, the next required action is fed back into the dzVents script and then the relevant API commands are given to the battery system.
 The total planning is displayed in the log of the text device and also highlights the top 5 lowest prices in the remaining free/unclassified hours. Those are the best times for heavy electricity consumers, like tumbledryers, washing machines, electric cars etc. 
