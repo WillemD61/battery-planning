@@ -91,7 +91,7 @@ To get an API token (it is free):
 1. Register for an account at https://transparency.entsoe.eu/dashboard/show
 2. Send an email with subject "Restful API access" and your account email address in the body.
 3. After receipt of their confirmation, go into your account and generate your token.
-4. Copy and paste the token to replace the xxxxxx on the line indicated in the python program where it says securitytoken="xxxxxxxxxxx" (line 45). For the Domoticz mode copy and paste the token onto the Domoticz user variable.
+4. Copy and paste the token to replace the xxxxxx on the line indicated in the python program where it says securitytoken="xxxxxxxxxxx" (line 52). For the Domoticz mode copy and paste the token onto the Domoticz user variable.
 
 # Program internal logic
 
