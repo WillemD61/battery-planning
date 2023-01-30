@@ -1,6 +1,6 @@
 # Battery planning and control
 
-Optimise battery charging/discharging with hourly electricity prices for maximised profit, with the option to include solar panel production forecast.
+Optimise battery charging/discharging with hourly electricity prices for maximised profit, with the option to include solar panel production forecast. (added Jan 30, 2023)
 
 # Purpose
 
