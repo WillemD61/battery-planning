@@ -40,9 +40,9 @@ The following Domoticz variables and devices need to be set up and adapted in th
 
 Variables: 
 * securityTokenIDX=12                 # the IDX of the Domoticz user variable holding the API security token for transparency.entsoe.eu
-* maxBatteryCapacityIDX=14            # the IDX of the Domoticz user variable holding the value for the maximum available battery charge capacity
-* maxBatteryChargeSpeedIDX=15         # the IDX of the Domoticz user variable holding the value for the maximum charge speed
-* maxBatteryDischargeSpeedIDX=16      # the IDX of the Domoticz user variable holding the value for the maximum discharge speed
+* maxBatteryCapacityIDX=14            # the IDX of the Domoticz user variable holding the value for the maximum available battery charge capacity (in Wh)
+* maxBatteryChargeSpeedIDX=15         # the IDX of the Domoticz user variable holding the value for the maximum charge speed (in W)
+* maxBatteryDischargeSpeedIDX=16      # the IDX of the Domoticz user variable holding the value for the maximum discharge speed (in W)
 
 Devices:
 * planningDisplayIDX=111              # the IDX number of a Domoticz text device to use for display of the planning
@@ -67,8 +67,8 @@ The Domoticz mode re-uses the entsoe.xml file (without timestamp in the name) fo
 
 If the -p option is added to the call of the python program, then the forecasted production of the PV panels will be included in the planning. For this the location (latitude/longitude) settings in Domoticz need to be defined and the following user variables need to be set up (with IDX numbers adapted to the environment)
 
-* pvPanelAngleIDX=17                  # the IDX of the Domoticz user variable holding the value of the PV panel angle (horizontal = 0)
-* pvPanelAzimuthIDX=18                # the IDX of the Domoticz user variable holding the value of the PV panel azimuth (south = 0)
+* pvPanelAngleIDX=17                  # the IDX of the Domoticz user variable holding the value of the PV panel angle (in degrees, horizontal = 0)
+* pvPanelAzimuthIDX=18                # the IDX of the Domoticz user variable holding the value of the PV panel azimuth (in degrees, south = 0)
 * pvPanelMaxPeakIDX=19                # the IDX of the Domoticz user variable holding the value of the PV panel max peak kWH
 
 The forecast will be obtained from forecast.solar and shown as separate lines in the planning. For each line it will be defined whether to store the production in the battery system or to return it to the grid. The charge/discharge action related to the price line in the same hour will be adapted accordingly.
