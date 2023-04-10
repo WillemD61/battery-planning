@@ -689,7 +689,7 @@ def updateDisplayList(displayList,SeqNr1,SeqNr2,extraCharge):
                     displayList[i][7]=abs(displayList[i][5]/hourMaxDischarge*100)
                 maxUsePct=int(displayList[i][7])
     else: # maxMin
-        if SeqNr2==None:
+        if SeqNr2==None:  # a SellFirst action
             minSeqNr=len(displayList) # is beyond end of list so no new charge (in case of sale only)
             minHR=displayList[minSeqNr-1][2][11:13]
         else:
@@ -697,7 +697,7 @@ def updateDisplayList(displayList,SeqNr1,SeqNr2,extraCharge):
             minHR=displayList[minSeqNr][2][11:13]
         maxSeqNr=SeqNr1
         maxHR=displayList[maxSeqNr][2][11:13]
-        if (minHR==maxHR):  # special case where PV is discharged/returned at price of same hour, max is priceline, min is pv line
+        if (minHR==maxHR) and SeqNr2!=None:  # special case where PV is discharged/returned at price of same hour, max is priceline, min is pv line
         # instead of discharge on max and charge on min, this is only discharge/return on max
             displayList[minSeqNr][4]="Discharge"
             displayList[minSeqNr][5]=extraCharge
