@@ -12,9 +12,9 @@ The domoticz version has the option to include solar panel production forecast i
 
 Call: python3 dz-battery-planning.py options
 Options:
-    -d or -s for domoticz or standalone mode
-    -t, -v or -q to contol the level of output
-    -p for inclusion of solar panel production (only in domoticz mode)
+*    -d or -s for domoticz or standalone mode
+*    -t, -v or -q to contol the level of output
+*    -p for inclusion of solar panel production (only in domoticz mode)
 
 # Stand alone mode
 
