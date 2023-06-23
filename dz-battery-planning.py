@@ -50,7 +50,7 @@ def getUserInput():
     maxBatteryCapacity=int(input("Enter max capacity in Wh (default 5000) :") or 5000)
     maxChargeSpeed=int(input("Enter max charge speed in Watt (default 2000) :") or 2000)
     maxDischargeSpeed=int(input("Enter max discharge speed in Watt (default 1500) :") or 1500)
-    conversionEfficiency=int(input("Enter conversion efficiency percentage (default 100) :" or 100)
+    conversionEfficiency=int(input("Enter conversion efficiency percentage (default 100) :") or 100)
     conversionEfficiency=float(conversionEfficiency)/100.0
     securitytoken='xxxxxx paste in your entsoe api token here xxxxxxx'  # paste in your own security token from entsoe.eu
 
