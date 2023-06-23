@@ -1,6 +1,6 @@
 # Battery planning and control
 
-Optimise battery charging/discharging with hourly electricity prices for maximised profit, with the option to include solar panel production forecast. (added Jan 30, 2023)
+Plan and optimise battery charging/discharging for maximised profit using hourly electricity prices, with the option to include solar panel production forecast. Either plan the day ahead or simulate the past.
 
 # Purpose
 
@@ -10,14 +10,22 @@ The standalone mode will interactively request user input and provide feedback o
 
 The domoticz version has the option to include solar panel production forecast in the planning (with the -p command line argument). It will take location and pv panel configuration data from domoticz variables and obtain production forecast for current and next day from the website forecast.solar
 
+Call: python3 dz-battery-planning.py options
+Options:
+    -d or -s for domoticz or standalone mode
+    -t, -v or -q to contol the level of output
+    -p for inclusion of solar panel production (only in domoticz mode)
+
 # Stand alone mode
 
 The program will need as input:
 1) **Your own API token** from transparancy.entsoe.eu (to be adapted in the program, see below)
 2) The planning period
-3) The battery characteristics: maximum capacity and maximum charge and discharge speed
+3) The battery characteristics: maximum capacity, maximum charge and discharge speed, conversion efficiency
 
-The main purpose of the program is to plan today and tomorrow (if the prices for tomorrow are already available, normally after 15:00 hours). It can be re-run at any time to re-plan the remaining period, given an initial charge of that moment. It can also be used to run on historic price data to simulate what could have been achieved and to evaluate return on investment for a battery system. At the end of the planning period the remaining charge will be zero and profit optimised.
+The main purpose of the program is to plan today and tomorrow (if the prices for tomorrow are already available, normally after 15:00 hours). It can be re-run at any time to re-plan the remaining period, given an initial charge of that moment. 
+
+It can however also be used to run on historic price data to simulate what could have been achieved and to evaluate return on investment for a battery system. At the end of the planning period the remaining charge will be zero and profit optimised.
 
 If the price data from entsoe.eu has been downloaded before it can be re-used from existing files, instead of requesting it again.
 
@@ -34,7 +42,7 @@ Note the price data from the entsoe website is stored in local xml files with a 
 
 For this integration both the python program and the dzVents scripts (published here as .txt files) are needed. The dzVents file contents should be copied and pasted into a script via the Domoticz interface. The python program is expected in the domoticz/python folder (please adapt the dzVents script if a different folder is used)
 
-The program will take input from Domoticz variables and devices and will trigger output onto Domoticz devices. The idx numbers for these devices will need to be adapted in the program and in the Domoticz script(s) as these differ for each operating environment.
+The program will take input from Domoticz variables and devices and will trigger output onto Domoticz devices. The idx numbers show below for these devices will need to be adapted in the program and in the Domoticz script(s) as these differ for each operating environment.
 
 The following Domoticz variables and devices need to be set up and adapted in the python program:
 
@@ -43,7 +51,8 @@ Variables:
 * maxBatteryCapacityIDX=14            # the IDX of the Domoticz user variable holding the value for the maximum available battery charge capacity (in Wh)
 * maxBatteryChargeSpeedIDX=15         # the IDX of the Domoticz user variable holding the value for the maximum charge speed (in W)
 * maxBatteryDischargeSpeedIDX=16      # the IDX of the Domoticz user variable holding the value for the maximum discharge speed (in W)
-
+* conversionEfficiency=20             # the IDX of the Domoticz user variable holding the value for the conversion efficiency percentage
+  
 Devices:
 * planningDisplayIDX=111              # the IDX number of a Domoticz text device to use for display of the planning
 * batterySwitchIDX=112                # the IDX of the Domoticz selector switch for controlling the battery system actions 
@@ -53,13 +62,15 @@ Devices:
 * batteryDischargeCode=20
 * batteryChargeLevelIDX=113           # the IDX of the Domoticz device with updated actual battery charge level, in percent (should be updated through the battery system API)
 
-The Domoticz integration mode is normally triggered by a call from the Domoticz dzVents script. The dzVents script requires also some of the same idx numbers as the python program. The Domoticz integration mode can also be run from the Unix command line for testing using the "-d" command line argument (so type "python3 dz-battery-planning.py -d"). The Domoticz mode creates a planning for maximum one day ahead, depending on availability of prices.
+The Domoticz integration mode is normally triggered by a call from the Domoticz dzVents script. The dzVents script requires also some of the same idx numbers as the python program (so please adapt for your environment). The Domoticz integration mode can also be run from the Unix command line for testing purposes using the "-d" command line argument (so type "python3 dz-battery-planning.py -d"). The Domoticz mode creates a planning for maximum one day ahead, depending on availability of prices.
 
 Every time a new planning is created, the next required action is fed back into the dzVents script and then the relevant API commands are given to the battery system by the script. The total planning is displayed in the log of the text device and also highlights the top 5 lowest prices in the remaining free/unclassified hours (provided those are below the average price of the day). Those are the best times for heavy electricity consumers, like tumbledryers, washing machines, electric cars etc. 
 
-Note that the current version is for simulation purposes only so no actual battery interface is present and the interface is assumed to be very simple. The battery system sends a current charge level and can receive three commands: Off, Charge, Discharge. The controlling script will send those commands depending on the action and the target charge level received from the planning program verus current charge level.
+Note that the current version is for simulation purposes only so no actual battery interface is present and the interface is assumed to be very simple, as follows: battery system sends a current charge level and can receive three commands: Off, Charge, Discharge. The controlling script will send those commands depending on the action and the target charge level received from the planning program verus current charge level.
 
 A separate dzVents script is created to simulate a battery system in absence of a real setup. 
+
+With some more work Domoticz scripts could be create to interface to a real battery system. Or you could use to check your current battery system behaviour against the optimised plan.
 
 The Domoticz mode re-uses the entsoe.xml file (without timestamp in the name) for storing price data so no manual maintenance of the file system is required.
 
@@ -77,11 +88,21 @@ As the PV production is a forecast only and actual PV production will deviate, i
 
 The control of the battery system will be based on target charge level for the hour, including the PV forecast.
 
+# Conversion efficiency
+
+Latest addition to the program is the conversion efficiency, i.e. a percentage indicating the difference between the quantities measured from/to the grid and the quantities charged/discharged by the battery system.
+
+For example, a conversion efficiency percentage of 90 indicates:
+1) to store 1 kWh in the battery one would have to import 1/0.9=1.1 kWh from the grid
+2) a discharge of 1 kWh from the battery would result in a return of 1*0.9=0.9 kWh to the grid
+so in this example one would be paying for 1.1 kWh and getting paid for 0.9 kWh.
+As result, some combinations of hourly prices will no longer be profitable.
+
 # Limitations of the program
 
 It does not take into account any tax effects in the planning as these will differ strongly from country to country, but this could easily be added.
 
-It assumes a 100% efficiency in the process, i.e. the energy received and paid for from the grid is fully stored in the battery (and vice versa). Once a real efficiency is known, this could be included in the profitability calculation of each charge/discharge and discharge/charge action pair. It also assumes a linear charge/discharge curve (when calculating remaining charge/discharge capacity for part of an hour).
+It also assumes a linear charge/discharge curve (for example when calculating remaining charge/discharge capacity for part of an hour).
 
 It does not plan for electricity consumption in the home network. It can however be used to re-plan after a situation has changed as result of consumption. It also indicates the remaining cheapest hours without any planned action (with low_1, low_2 etc).
 

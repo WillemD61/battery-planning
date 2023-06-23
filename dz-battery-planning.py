@@ -6,6 +6,7 @@ securityTokenIDX=12                 # the IDX of the Domoticz user variable hold
 maxBatteryCapacityIDX=14            # the IDX of the Domoticz user variable holding the value for the maximum available battery charge capacity
 maxBatteryChargeSpeedIDX=15         # the IDX of the Domoticz user variable holding the value for the maximum charge speed
 maxBatteryDischargeSpeedIDX=16      # the IDX of the Domoticz user variable holding the value for the maximum discharge speed
+conversionEfficiencyIDX=20             # the IDX of the Domoticz user variable holding the value for the conversion efficiency percentage of the battery system
 # following user variables are needed if PV panel forecast is to be included (use -p option on the commandline), otherwise set to 0
 pvPanelAngleIDX=17                  # the IDX of the Domoticz user variable holding the value of the PV panel angle (horizontal = 0)
 pvPanelAzimuthIDX=18                # the IDX of the Domoticz user variable holding the value of the PV panel azimuth (south = 0)
@@ -41,7 +42,7 @@ todayLongString=datetime.strftime(today,'%Y-%m-%d')
 
 def getUserInput():
     # get user input, with limited (!!) input validation, used in standalone mode
-    global initialCharge,maxBatteryCapacity,maxChargeSpeed,maxDischargeSpeed,startdate,enddate,starthour,securitytoken
+    global initialCharge,maxBatteryCapacity,maxChargeSpeed,maxDischargeSpeed,startdate,enddate,starthour,securitytoken,conversionEfficiency
     startdate=input("Enter startdate as YYYYMMDD (default=today)   : ") or todayString
     enddate=input("Enter enddate as YYYYMMDD (default=startdate+1) : ") or datetime.strftime(datetime.strptime(startdate,'%Y%m%d')+timedelta(days=1),'%Y%m%d')
     starthour=int(input("Enter start hour as HH (default next hour)   : ") or datetime.strftime(datetime.now()+timedelta(hours=1),'%H'))
@@ -49,11 +50,13 @@ def getUserInput():
     maxBatteryCapacity=int(input("Enter max capacity in Wh (default 5000) :") or 5000)
     maxChargeSpeed=int(input("Enter max charge speed in Watt (default 2000) :") or 2000)
     maxDischargeSpeed=int(input("Enter max discharge speed in Watt (default 1500) :") or 1500)
+    conversionEfficiency=int(input("Enter conversion efficiency percentage (default 100) :") or 100)
+    conversionEfficiency=float(conversionEfficiency)/100.0
     securitytoken='xxxxxx paste in your entsoe api token here xxxxxxx'  # paste in your own security token from entsoe.eu
 
 def getPlanningInput():
     # read initial planning data from Domoticz variables and devices (instead of user input)
-    global initialCharge,maxBatteryCapacity,maxChargeSpeed,maxDischargeSpeed,startdate,enddate,starthour,securitytoken
+    global initialCharge,maxBatteryCapacity,maxChargeSpeed,maxDischargeSpeed,startdate,enddate,starthour,securitytoken,conversionEfficiency
     getPlanningInputSuccess=True
 
     startdate=todayString
@@ -74,6 +77,10 @@ def getPlanningInput():
 
     responseResult,varValue=getUserVariable(maxBatteryDischargeSpeedIDX)
     if responseResult: maxDischargeSpeed=float(varValue) 
+    getPlanningInputSuccess=getPlanningInputSuccess and responseResult
+
+    responseResult,varValue=getUserVariable(conversionEfficiencyIDX)
+    if responseResult: conversionEfficiency=float(varValue)/100.0
     getPlanningInputSuccess=getPlanningInputSuccess and responseResult
 
     responseResult,securitytoken=getUserVariable(securityTokenIDX)
@@ -439,15 +446,30 @@ def createPairList(HourPriceList):
                                         # PV line can pair with price line of same hour
                 priceDifferential=(Element2[1]-Element1[1])
                 if priceDifferential>0 and Element2[8]==0:  # contribution of paired action needs to be positive, and max should not be PV forecast line
-                    # charge/discharge=min/max pair
-                    Pair=[pairNr,Element1,Element2,priceDifferential,pairAvailable,chargeDone,"minmax"]  # 7 fields per pair
-                    PairList.append(Pair)
-                else:
-                    if priceDifferential<0 and Element1[8]==0:
-                        Pair=[pairNr,Element1,Element2,-1*priceDifferential,pairAvailable,chargeDone,"maxmin"]  # can be pair with pv line a min
+                        # last element higher than first element, so charge/discharge=min/max=buy/sell pair
+                    priceDifferential=(Element2[1]*conversionEfficiency - Element1[1]/conversionEfficiency)
+                    if priceDifferential>0: # check if still positive after adjusting for conversion losses
+                        Pair=[pairNr,Element1,Element2,priceDifferential,pairAvailable,chargeDone,"minmax"]  # 7 fields per pair
                         PairList.append(Pair)
+                        if debug: print("pair appended,minmax        ",Pair)
+                    else:
+                        # no longer positive after conversion loss
+                        Pair=[pairNr,Element1,Element2,priceDifferential,pairAvailable,chargeDone,"minmax"]
+                        if debug: print("pair dropped, not usable    ",Pair)
+                else:
+                    if priceDifferential<0 and Element1[8]==0: #last element lower than first, so discharge/charge=max/min=sale/buyback pair
+                        priceDifferential=(Element1[1]*conversionEfficiency - Element2[1]/conversionEfficiency)
+                        if priceDifferential>0:
+                            Pair=[pairNr,Element1,Element2,priceDifferential,pairAvailable,chargeDone,"maxmin"]  # can be pair with pv line a min
+                            PairList.append(Pair)
+                            if debug: print("pair appended,maxmin        ",Pair)
+                        else:
+                            # no longer maxmin after conversion loss
+                            Pair=[pairNr,Element1,Element2,priceDifferential,pairAvailable,chargeDone,"maxmin"]
+                            if debug: print("pair dropped, not usable    ",Pair)
                 pairNr+=1
     PairList.sort(key=priceDiffminMaxField,reverse=True)  # sorted by priceDiff and then earliest min and earliest max (using sequence nr)
+    if debug: print("*************************************new pairlist ***************************************")
     for i in PairList: 
         if debug: print("pair ",i)
     return PairList
@@ -653,7 +675,7 @@ def updateDisplayList(displayList,SeqNr1,SeqNr2,extraCharge):
                 displayList[i][4]="Charge"
                 displayList[i][3]=displayList[i][3]+extraCharge
                 displayList[i][5]=displayList[i][5]+extraCharge
-                displayList[i][6]=displayList[i][6]-1*displayList[i][1]/1000*extraCharge/1000
+                displayList[i][6]=displayList[i][6]-1*displayList[i][1]/1000*extraCharge/1000/conversionEfficiency
                 if int(minHR)==starthour and displayList[i][2][0-10]==todayLongString:
                     minutesPassed=int(datetime.strftime(datetime.now(),'%M'))
                 else:
@@ -673,7 +695,7 @@ def updateDisplayList(displayList,SeqNr1,SeqNr2,extraCharge):
             if displayList[i][0]==maxSeqNr:
                 displayList[i][4]="Discharge"
                 displayList[i][5]=displayList[i][5]-extraCharge
-                displayList[i][6]=displayList[i][6]+displayList[i][1]/1000*extraCharge/1000
+                displayList[i][6]=displayList[i][6]+displayList[i][1]/1000*extraCharge/1000*conversionEfficiency
                 if int(maxHR)==starthour and displayList[i][2][0-10]==todayLongString:
                     minutesPassed=int(datetime.strftime(datetime.now(),'%M'))
                 else:
@@ -701,7 +723,7 @@ def updateDisplayList(displayList,SeqNr1,SeqNr2,extraCharge):
         # instead of discharge on max and charge on min, this is only discharge/return on max
             displayList[minSeqNr][4]="Discharge"
             displayList[minSeqNr][5]=extraCharge
-            displayList[minSeqNr][6]=abs(extraCharge)/1000*displayList[maxSeqNr][1]/1000
+            displayList[minSeqNr][6]=abs(extraCharge)/1000*displayList[maxSeqNr][1]/1000*conversionEfficiency
             displayList[minSeqNr][7]=100
             minUsePct=100
             maxUsePct=displayList[maxSeqNr][7]
@@ -711,7 +733,7 @@ def updateDisplayList(displayList,SeqNr1,SeqNr2,extraCharge):
                     displayList[i][4]="Discharge"
                     displayList[i][3]=displayList[i][3]+extraCharge
                     displayList[i][5]=displayList[i][5]+extraCharge
-                    displayList[i][6]=displayList[i][6]-1*displayList[i][1]/1000*extraCharge/1000
+                    displayList[i][6]=displayList[i][6]-1*displayList[i][1]/1000*extraCharge/1000*conversionEfficiency
                     if int(maxHR)==starthour and displayList[i][2][0-10]==todayLongString:
                         minutesPassed=int(datetime.strftime(datetime.now(),'%M'))
                     else:
@@ -731,7 +753,7 @@ def updateDisplayList(displayList,SeqNr1,SeqNr2,extraCharge):
                 if displayList[i][0]==minSeqNr:
                     displayList[i][4]="Charge"
                     displayList[i][5]=displayList[i][5]-extraCharge
-                    displayList[i][6]=displayList[i][6]+displayList[i][1]/1000*extraCharge/1000    
+                    displayList[i][6]=displayList[i][6]+displayList[i][1]/1000*extraCharge/1000/conversionEfficiency
                     if int(minHR)==starthour and displayList[i][2][0-10]==todayLongString:
                         minutesPassed=int(datetime.strftime(datetime.now(),'%M'))
                     else:
