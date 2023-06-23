@@ -90,12 +90,12 @@ The control of the battery system will be based on target charge level for the h
 
 # Conversion efficiency
 
-Latest addition to the program is the conversion efficiency, i.e. a percentage indicating the difference between the quantities measured from/to the grid and the quantities charge/discharged by the battery system.
+Latest addition to the program is the conversion efficiency, i.e. a percentage indicating the difference between the quantities measured from/to the grid and the quantities charged/discharged by the battery system.
 
 For example, a conversion efficiency percentage of 90 indicates:
 1) to store 1 kWh in the battery one would have to import 1/0.9=1.1 kWh from the grid
 2) a discharge of 1 kWh from the battery would result in a return of 1*0.9=0.9 kWh to the grid
-so with this round trip one would be paying for 1.1 KWh and getting paid for 0.9 kWh.
+so in this example one would be paying for 1.1 kWh and getting paid for 0.9 kWh.
 As result, some combinations of hourly prices will no longer be profitable.
 
 # Limitations of the program
