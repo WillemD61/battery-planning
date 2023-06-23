@@ -10,8 +10,8 @@ The standalone mode will interactively request user input and provide feedback o
 
 The domoticz version has the option to include solar panel production forecast in the planning (with the -p command line argument). It will take location and pv panel configuration data from domoticz variables and obtain production forecast for current and next day from the website forecast.solar
 
-Call: python3 dz-battery-planning.py options
-Options:
+Call: python3 dz-battery-planning.py
+Command line options:
 *    -d or -s for domoticz or standalone mode
 *    -t, -v or -q to contol the level of output
 *    -p for inclusion of solar panel production (only in domoticz mode)
