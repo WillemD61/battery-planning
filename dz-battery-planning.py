@@ -94,7 +94,7 @@ def getPlanningInput():
 def getLocation():
     # function to get the value of a location defined in settings
     try:
-        apiCall="type=settings"
+        apiCall="type=command&param=getsettings"
         response = requests.get(baseJSON+apiCall)
         responseResult=str(response.json())
         if responseResult=="ERR":
@@ -172,7 +172,7 @@ def setTextDevice(textIDX,displayText):
 def getPercentageDevice(varIDX):
     # function to get the value of a percentage device indicated by the varIDX number
     try:
-        apiCall="type=devices&rid="+str(varIDX)
+        apiCall="type=command&param=getdevices&rid="+str(varIDX)
         response = requests.get(baseJSON+apiCall)
         responseResult=str(response.json()["status"])
         if responseResult=="ERR":
