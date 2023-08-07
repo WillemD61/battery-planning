@@ -95,6 +95,7 @@ def getLocation():
     # function to get the value of a location defined in settings
     try:
         apiCall="type=command&param=getsettings"
+#        apiCall="type=settings" # for domoticz versions before 2023.2
         response = requests.get(baseJSON+apiCall)
         responseResult=str(response.json())
         if responseResult=="ERR":
@@ -173,6 +174,7 @@ def getPercentageDevice(varIDX):
     # function to get the value of a percentage device indicated by the varIDX number
     try:
         apiCall="type=command&param=getdevices&rid="+str(varIDX)
+#        apiCall="type=devices&rid="+str(varIDX)   # for domoticz versions before 2023.2
         response = requests.get(baseJSON+apiCall)
         responseResult=str(response.json()["status"])
         if responseResult=="ERR":
@@ -416,8 +418,9 @@ def rebuildHourPriceList(displayList):
     # rebuild the HourPriceList using results from previous cycles as tracked in displayList 
     HourPriceList=[]
     if debug: print("rebuilding HourPriceList")
+    datetimeString=datetime.strftime(runDate,'%Y-%m-%d %H:%M:%S')
     for i in displayList:
-        if int(i[2][11:13])>=starthour or i[2][8:10]!=startdate[6:8]: # all prices after (and including) starthour on first day are put on list
+        if int(i[2][11:13])>=starthour or i[2][8:10]!=datetimeString[8:10]: # all prices after (and including) starthour on first day are put on list
             if i[4]=="unclassified" or abs(i[7])<100: #  not fully used
                 if debug: print("Appending hour ",i)
                 HourPriceList.append(i)
@@ -928,7 +931,7 @@ def processCLarguments():
     return CLargSuccess
 
 def main():
-    global startdate,enddate,initialCharge,starthour,PVincl
+    global startdate,enddate,initialCharge,starthour,PVincl,runDate
 
     if not processCLarguments():
         quit()
