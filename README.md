@@ -2,6 +2,8 @@
 
 Plan and optimise battery charging/discharging for maximised profit using hourly electricity prices, with the option to include solar panel production forecast. Either plan the day ahead or simulate the past.
 
+NOTE: the program has been adapted to handle 15 minute prices but at the moment only using a workaround: 15 minute prices are converted to hourly averages and then optimisation takes place with those hourly prices.
+
 # Purpose
 
 This is a python program that creates a planning for charging and discharging a home battery system to optimise profit. It can be run in standalone mode or in Domoticz integration mode. (with the -s or -d command line argument)
