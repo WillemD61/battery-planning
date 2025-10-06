@@ -338,34 +338,50 @@ def parseXMLintoPriceLists(xmlfile,runDate):
     displayList=[]    # the list for tracking and display of results
     sequenceNr=0      # sequence number counts number of lines from entsoe
     pvHRs=0           # additional lines for pv forecast
-    if PVincl: 
+    if PVincl:
         forecastList=parseJSONintoPVList()
+    # convert 15 minute prices to hourly averages first
+    hourAvgpriceList=[]
+    priceQtrNr=1
+    hourTotal=0
     for item in root.iter():
-        pvForecast=0
         if item.tag.find('price.amount')>0:
             price=float(item.text)
-            if sequenceNr<=47: # never more than 2 days even if entsoe provides more than requested
-                if debug: print("processing price ",item.text)
-                datetimeString=datetime.strftime(runDate+timedelta(hours=sequenceNr),'%Y-%m-%d %H:%M:%S')
-                if sequenceNr>=starthour or sequenceNr>23: # all prices after (and including) starthour on first day are put on hourpricelist, plus next day, if any
+            print("processing price ",price," for qtr ",priceQtrNr)
+            hourTotal += price
+            if priceQtrNr % 4 == 0:
+                hourAvgPrice=float(hourTotal / 4)
+                hourAvgpriceList.append(hourAvgPrice)
+                hourTotal=0
+                print("new avgprice",hourAvgPrice)
+            priceQtrNr += 1
+    # now continue with hourly prices like before
+    for hourAvgPrice in hourAvgpriceList:
+        pvForecast=0
+        if sequenceNr<=47: # never more than 2 days even if entsoe provides more than requested
+            price=hourAvgPrice
+            if debug: print("processing price ",price)
+            datetimeString=datetime.strftime(runDate+timedelta(hours=sequenceNr),'%Y-%m-%d %H:%M:%S')
+            if sequenceNr>=starthour or sequenceNr>23: # all prices after (and including) starthour on first day are put on hourpricelist, plus next day, if any
 # list element will consist of sequenceNr,price,datetime,usedcapacity,usetype(usetype=Unclassified,Charge,Discharge),changechargeqty,changeamount,percentageused,pvForecast
-                    ListElement=[sequenceNr+pvHRs,price,datetimeString,initialCharge,"unclassified",0,0,0,0] 
-                    HourPriceList.append(ListElement)
-                    if PVincl:
-                        pvForecast=findPVforecast(datetimeString[0:10],int(datetimeString[11:13]),forecastList)
-                        if pvForecast>0:
-                            pvHRs+=1
-                            pvListElement=[sequenceNr+pvHRs,0,datetimeString,initialCharge,"unclassified",0,0,0,pvForecast]
-                            HourPriceList.append(pvListElement)
-                    if debug: print("List with length ",len(HourPriceList)," ",HourPriceList)
-                else:
-                    ListElement=[sequenceNr+pvHRs,price,datetimeString,0,"unclassified",0,0,0,0]  # no initial charge before starthour
-                displayList.append(ListElement)
-                if PVincl and pvForecast>0:  
-                    displayList.append(pvListElement)
+                ListElement=[sequenceNr+pvHRs,price,datetimeString,initialCharge,"unclassified",0,0,0,0]
+                HourPriceList.append(ListElement)
+                if PVincl:
+                    pvForecast=findPVforecast(datetimeString[0:10],int(datetimeString[11:13]),forecastList)
+                    if pvForecast>0:
+                        pvHRs+=1
+                        pvListElement=[sequenceNr+pvHRs,0,datetimeString,initialCharge,"unclassified",0,0,0,pvForecast]
+                        HourPriceList.append(pvListElement)
+                if debug: print("List with length ",len(HourPriceList)," ",HourPriceList)
+            else:
+                ListElement=[sequenceNr+pvHRs,price,datetimeString,0,"unclassified",0,0,0,0]  # no initial charge before starthour
+            displayList.append(ListElement)
+            if PVincl and pvForecast>0:
+                displayList.append(pvListElement)
 # pv lines are always in the list after the price line of the same hour
             sequenceNr+=1
     return HourPriceList,displayList,sequenceNr
+
 
 def parseJSONintoPVList():
     # create PV forecast list out of json file 
