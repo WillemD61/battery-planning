@@ -1,14 +1,30 @@
 # Battery planning and control
 
-Plan and optimise battery charging/discharging for maximised profit using hourly electricity prices, with the option to include solar panel production forecast. Either plan the day ahead or simulate the past.
+Plan and optimise battery charging/discharging for maximised profit using hourly or 15-minute electricity prices, with the option to include solar panel production forecast and expected power usage. Normally used to plan ahead but can also simulate the past (provided certain conditions are met, see below).
 
-NOTE: the program has been adapted to handle 15 minute prices but at the moment only using a workaround: 15 minute prices are converted to hourly averages and then optimisation takes place with those hourly prices.
+The program is now designed to drive a Marstek battery, but can easily be adapted to drive other batteries.
 
 # Purpose
 
-This is a python program that creates a planning for charging and discharging a home battery system to optimise profit. It can be run in standalone mode or in Domoticz integration mode. (with the -s or -d command line argument)
+This is a python program that creates a planning for charging and discharging a home battery system to optimise profit. It is called from a command line with various options to control behaviour:
 
-The standalone mode will interactively request user input and provide feedback on the screen. The Domoticz mode will take the input from Domoticz variables and devices, load the planning onto a Domoticz text device for display and trigger the next action from the planning. The standalone mode will only produce a planning (into a file and onto the screen) and not trigger any action.
+-t , -v , -q : tracing, verbose or quiet to specifiy output details for debuggin
+-d , -i, -s  : full domoticz integration (both input and output), integrated for input only with output to a file, standalone with manual input and output to a file
+-p : to include PV forecast (or actual for past dates)
+-u : to include estimate power usage, based on details available in domoticz short history
+-n : netting/saldering applied, affects price for return to grid
+-b : tax included (energytax and VAT/BTW)
+-z : zero import from grid
+-h : hourly average price, otherwise 15-minute prices
+-m : use mqtt communication to Marstek battery, instead of Marstek Venus plugin via Open API
+
+It can for example be scheduled from cron, from domoticz or run manually.
+
+The standalone mode will interactively request user input and provide feedback on the screen and in a file. The Domoticz mode will take the input from Domoticz variables and devices, load the planning onto a Domoticz text device for display and trigger the next action from the planning and send it to the battery. The standalone mode will only produce a planning (into a file) and not trigger any action.
+
+
+
+
 
 The domoticz version has the option to include solar panel production forecast in the planning (with the -p command line argument). It will take location and pv panel configuration data from domoticz variables and obtain production forecast for current and next day from the website forecast.solar
 
