@@ -1,3 +1,5 @@
+# UNDER CONSTRUCTION
+
 # Battery planning and control
 
 Plan and optimise battery charging/discharging for maximised profit using hourly or 15-minute electricity prices, with the option to include solar panel production forecast and expected power usage. Normally used to plan ahead but can also simulate the past (provided certain conditions are met, see below).
@@ -26,7 +28,7 @@ It can for example be scheduled from cron, from domoticz or run manually. It is 
 
 The standalone mode will interactively request user input and provide feedback on the screen and in a file. The Domoticz mode will take the input from Domoticz variables and devices, load the planning onto a Domoticz text device for display and trigger the next action from the planning and send it to the battery. The standalone mode will only produce a planning (into a file) and not trigger any action.
 
-The domoticz version has the option to include solar panel production forecast in the planning for multiple pv panels groups (with the -p command line argument). It will take location and pv panel configuration data (hard code on line ...) and request the forecast from forecast.solar website.
+It has the option to include solar panel production forecast in the planning for multiple pv panels groups (with the -p command line argument). It will take location and pv panel configuration data (hard code on line ...) and request the forecast from forecast.solar website.
 
 Prices will be taken from entsoe (eu transparency site) or, if not available or complete, from the energyzero website. An API token from entsoe is required, see below. Additional kWh pricing elements can be specified, such as energy tax, supplier purchase fee, network fee, cycle costs, VAT/BTW percentage.
 
@@ -34,19 +36,13 @@ The -m option can be used to circumvent the Marstek open API plugin setup and co
 
 Of course battery characteristics such as current charge, maximum and minimum capacity, maximum charge-speed and discharge-speed and conversion efficiency are taken into account.
 
+# Simulate the past
 
-It can however also be used to run on historic price data to simulate what could have been achieved and to evaluate return on investment for a battery system. At the end of the planning period the remaining charge will be zero and profit optimised.
+It can also be used to run on historic price data to simulate what could have been achieved and to evaluate return on investment for a battery system. It will simulate and optimise each day, starting at 15:00 hrs to 24:00 the next day, for the total period requested.
 
-If the price data from entsoe.eu has been downloaded before it can be re-used from existing files, instead of requesting it again.
+If the price data from entsoe.eu has been downloaded before it can be re-used from existing files, instead of requesting it again. Note during simulation of the past the price data from the entsoe website is stored in local xml files with a timestamp and not automatically removed, so some manual maintenance of the file system will then be required at some point. 
 
-The progress, intermediate steps and finals results will be displayed on screen and an output file will be created that can be loaded into a spreadsheet. The level of output can be controlled by command line arguments:
-* -t for tracing. This is a debug mode with full display of intermediate steps and results.
-* -v for verbose. This still shows each next step in the planning and the impact on the overall plan.
-* -q for quiet. Minimal output. Default.
-
--s is the command line argument for standalone mode and is the default.
-
-Note the price data from the entsoe website is stored in local xml files with a timestamp and not automatically removed, so some manual maintenance of the file system will be required at some point.
+For the past it can also include actual pv production and actual usage, if requested, but only if a database file with hourly data has been setup before running the program, so this is a very customised case.
 
 # Domoticz integration mode
 
