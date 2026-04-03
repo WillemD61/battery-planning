@@ -2,11 +2,15 @@
 
 Plan and optimise battery charging/discharging for maximised profit using hourly or 15-minute electricity prices, with the option to include solar panel production forecast and expected power usage. Normally used to plan ahead but can also simulate the past (provided certain conditions are met, see below).
 
-The program is now designed to drive a Marstek battery, but can easily be adapted to drive other batteries.
+It takes a linear programming optimisation approach for all intervals (15-min or hour) with a known price, so normally until 24:00 today or tomorrow (if tomorrows prices are already known).
 
-# Purpose
+The program is now designed to drive a Marstek battery, but can easily be adapted to drive other batteries, or run standalone without interface.
 
-This is a python program that creates a planning for charging and discharging a home battery system to optimise profit. It is called from a command line with various options to control behaviour:
+# Main Purpose
+
+The main purpose of the program is to plan today and tomorrow (if the prices for tomorrow are already available, normally after 13:00 hours). It can be re-run at any time to re-plan the remaining period, given an initial charge of that moment. 
+
+It is a python program that is started from a command line with various command line options to control behaviour. You can choose from:
 
 * -t , -v , -q : tracing, verbose or quiet to specifiy output details for debuggin
 * -d , -i, -s  : full domoticz integration (both input and output), integrated for input only with output to a file, standalone with manual input and output to a file
@@ -17,32 +21,19 @@ This is a python program that creates a planning for charging and discharging a 
 * -z : zero import from grid
 * -h : hourly average price, otherwise 15-minute prices
 * -m : use mqtt communication to Marstek cloud to get current capacity and to set mode , instead of Marstek Venus plugin via Open API
-</br>
-It can for example be scheduled from cron, from domoticz or run manually.
+
+It can for example be scheduled from cron, from domoticz or run manually. It is specifically designed to run at the start of each price interval (for example hour) to set the battery mode for the coming interval, but taking into accouunt all know future prices etc. 
 
 The standalone mode will interactively request user input and provide feedback on the screen and in a file. The Domoticz mode will take the input from Domoticz variables and devices, load the planning onto a Domoticz text device for display and trigger the next action from the planning and send it to the battery. The standalone mode will only produce a planning (into a file) and not trigger any action.
 
+The domoticz version has the option to include solar panel production forecast in the planning for multiple pv panels groups (with the -p command line argument). It will take location and pv panel configuration data (hard code on line ...) and request the forecast from forecast.solar website.
 
+Prices will be taken from entsoe (eu transparency site) or, if not available or complete, from the energyzero website. An API token from entsoe is required, see below. Additional kWh pricing elements can be specified, such as energy tax, supplier purchase fee, network fee, cycle costs, VAT/BTW percentage.
 
+The -m option can be used to circumvent the Marstek open API plugin setup and communicate directly with the Marstek cloud via mqtt. The hame relay setup is required for this (https://github.com/tomquist/hame-relay docker setup without home assistant) and the MAC address of the Marstek battery needs to be provided.
 
+Of course battery characteristics such as current charge, maximum and minimum capacity, maximum charge-speed and discharge-speed and conversion efficiency are taken into account.
 
-The domoticz version has the option to include solar panel production forecast in the planning (with the -p command line argument). It will take location and pv panel configuration data from domoticz variables and obtain production forecast for current and next day from the website forecast.solar
-
-Call: python3 dz-battery-planning.py
-
-Command line options:
-*    -d or -s for domoticz or standalone mode
-*    -t, -v or -q to contol the level of output
-*    -p for inclusion of solar panel production (only in domoticz mode)
-
-# Stand alone mode
-
-The program will need as input:
-1) **Your own API token** from transparancy.entsoe.eu (to be adapted in the program, see below)
-2) The planning period
-3) The battery characteristics: maximum capacity, maximum charge and discharge speed, conversion efficiency
-
-The main purpose of the program is to plan today and tomorrow (if the prices for tomorrow are already available, normally after 15:00 hours). It can be re-run at any time to re-plan the remaining period, given an initial charge of that moment. 
 
 It can however also be used to run on historic price data to simulate what could have been achieved and to evaluate return on investment for a battery system. At the end of the planning period the remaining charge will be zero and profit optimised.
 
