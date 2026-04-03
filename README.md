@@ -8,16 +8,16 @@ The program is now designed to drive a Marstek battery, but can easily be adapte
 
 This is a python program that creates a planning for charging and discharging a home battery system to optimise profit. It is called from a command line with various options to control behaviour:
 
--t , -v , -q : tracing, verbose or quiet to specifiy output details for debuggin
--d , -i, -s  : full domoticz integration (both input and output), integrated for input only with output to a file, standalone with manual input and output to a file
--p : to include PV forecast (or actual for past dates)
--u : to include estimate power usage, based on details available in domoticz short history
--n : netting/saldering applied, affects price for return to grid
--b : tax included (energytax and VAT/BTW)
--z : zero import from grid
--h : hourly average price, otherwise 15-minute prices
--m : use mqtt communication to Marstek battery, instead of Marstek Venus plugin via Open API
-
+* -t , -v , -q : tracing, verbose or quiet to specifiy output details for debuggin
+* -d , -i, -s  : full domoticz integration (both input and output), integrated for input only with output to a file, standalone with manual input and output to a file
+* -p : to include PV forecast (or actual for past dates)
+* -u : to include estimate power usage, based on details available in domoticz short history
+* -n : netting/saldering applied, affects price for return to grid
+* -b : tax included (energytax and VAT/BTW)
+* -z : zero import from grid
+* -h : hourly average price, otherwise 15-minute prices
+* -m : use mqtt communication to Marstek cloud to get current capacity and to set mode , instead of Marstek Venus plugin via Open API
+</br>
 It can for example be scheduled from cron, from domoticz or run manually.
 
 The standalone mode will interactively request user input and provide feedback on the screen and in a file. The Domoticz mode will take the input from Domoticz variables and devices, load the planning onto a Domoticz text device for display and trigger the next action from the planning and send it to the battery. The standalone mode will only produce a planning (into a file) and not trigger any action.
