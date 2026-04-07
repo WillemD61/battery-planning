@@ -1,4 +1,3 @@
-# UNDER CONSTRUCTION
 
 # Battery planning and control
 
