@@ -26,6 +26,10 @@ It is a python program that is started from a command line with various command 
 
 It can for example be scheduled from cron, from domoticz or run manually. It is specifically designed to run at the start of each price interval (for example hour) to set the battery mode for the coming interval, but taking into accouunt all know future prices etc. 
 
+As an example, I currently use it with teh follwoing line in the crontab:
+
+0 * * * * /usr/bin/python3 /home/pi/hame-relay/Marstek-planning.py -d -p -u -n -b -h -m >> /home/pi/hame-relay/batteryplanning.log 2>&1
+
 The standalone mode will interactively request user input and provide feedback on the screen and in a file. The Domoticz mode will take the input from Domoticz variables and devices, load the planning onto a Domoticz text device for display and trigger the next action from the planning and send it to the battery. The standalone mode will only produce a planning (into a file) and not trigger any action.
 
 It has the option to include solar panel production forecast in the planning for multiple pv panels groups (with the -p command line argument). It will take location and pv panel configuration data (hard code on line ...) and request the forecast from forecast.solar website.
