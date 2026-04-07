@@ -21,7 +21,7 @@ It is a python program that is started from a command line with various command 
 * -b : tax included (energytax and VAT/BTW)
 * -z : zero import from grid (discouraged, might not always leed to optimised results)
 * -h : hourly average price, otherwise 15-minute prices
-* -m : use mqtt communication to Marstek cloud to get current capacity and to set mode , instead of Marstek Venus plugin via Open API
+* -m : use mqtt communication to Marstek cloud to get current capacity and to set mode , instead of Marstek Venus plugin via Open API. If using mqtt, please allow for the 30 seconds intervals between mqtt commands to complete. 
 
 It can for example be scheduled from cron, from domoticz or run manually. It is specifically designed to run at the start of each price interval (for example hour) to set the battery mode for the coming interval, but taking into accouunt all know future prices etc. 
 
@@ -48,9 +48,11 @@ For the past it can also include actual pv production and actual usage, if reque
 
 # Domoticz integration mode
 
-The program will take input from Domoticz variables and devices and will trigger output onto Domoticz devices. The idx numbers show below for these devices will need to be adapted in the program file as these differ for each operating environment.
+The program will take input from Domoticz variables and devices and will trigger output onto Domoticz devices. The idx numbers for the Domotic devices will need to be adapted in the program file as these differ for each operating environment.
 
 The first 60 lines of the python program contain all references to the Domoticz installation, the PV panel setup and the Marstek plugin. These lines need to be read carefully and adapted for your local installation, for example settting up the relevant user variables and adapting the IDX numbers of the user variables in the python code.
+
+Also, a confirmation email of the next planning will be sent via the Domoticz notification system. If not desired, please comment out that line.
 
 # Solar/PV panel production integration
 
