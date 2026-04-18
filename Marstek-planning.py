@@ -1285,12 +1285,12 @@ def outputToBattery(schedule,starthour,result):
                 setBatteryAction("Manual",scheduleDateTime,-1*chargeIndirect,schedule)
             else:
                 if discharge>0: # manual discharge
-                    if discharge==maxDischargeSpeed or round((soc-discharge/onewayEff)/ratedBatteryCapacity,0)==minBatterySOCPct:
-                        print("next hour",priceListCurrentHr[3]," action ","self-consumption",discharge)
-                        setBatteryAction("AutoSelf",scheduleDateTime,0,schedule)
-                    else:
-                        print("next hour",priceListCurrentHr[3]," action ","manual discharge ",discharge)
-                        setBatteryAction("Manual",scheduleDateTime,discharge,schedule)
+                    #if discharge==maxDischargeSpeed or round((soc-discharge/onewayEff)/ratedBatteryCapacity,0)==minBatterySOCPct:
+                    #    print("next hour",priceListCurrentHr[3]," action ","self-consumption",discharge)
+                    #    setBatteryAction("AutoSelf",scheduleDateTime,0,schedule)
+                    #else:
+                    print("next hour",priceListCurrentHr[3]," action ","manual discharge ",discharge)
+                    setBatteryAction("Manual",scheduleDateTime,discharge,schedule)
                 else:
                     print("next hour",priceListCurrentHr[3]," action ","don't know")
                     # don't know, should not exist
